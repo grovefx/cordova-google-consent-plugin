@@ -1,0 +1,11 @@
+{
+  "name": "cordova-google-consent-plugin",
+  "version": "0.1.0",
+  "cordova": {
+    "id": "cordova-google-consent-plugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  }
+}

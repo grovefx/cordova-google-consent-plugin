@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="cordova-google-consent-plugin"
+    version="0.5.0">
+    <name>Cordova Google Consent Plugin </name>
+    <description></description>
+    <license>MIT</license>
+    <keywords></keywords>
+
+    <platform name="android">
+      <framework src="com.google.android.ads.consent:consent-library:$GC_VERSION" />
+      <preference name="GC_VERSION" default="1.0.4"/>
+      <js-module src="www/plugin.js" name="plugin">
+        <runs/>
+        <clobbers target="CordovaGoogleConsentPlugin" />
+      </js-module>
+      <config-file parent="/*" target="AndroidManifest.xml">
+          <uses-permission android:name="android.permission.INTERNET" />
+          <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+      </config-file>
+      <config-file target="res/xml/config.xml" parent="/*">
+        <feature name="CordovaGoogleConsentPlugin">
+          <param name="android-package" value="com.grovefx.plugins.GoogleConsent" />
+          <param name="onload" value="true" />
+        </feature>
+      </config-file>
+      <source-file src="src/android/com/grovefx/plugins/GoogleConsent.java" target-dir="src/com/grovefx/plugins/" />
+    </platform>
+
+    <platform name="ios">
+        <js-module src="www/plugin.js" name="plugin">
+            <runs/>
+            <clobbers target="CordovaGoogleConsentPlugin" />
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="CordovaGoogleConsentPlugin">
+                <param name="ios-package" value="MyCordovaPlugin" onload="true" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/MyCordovaPlugin.h" />
+        <source-file src="src/ios/MyCordovaPlugin.m" />
+        <framework src="PersonalizedAdConsent" type="podspec" spec="1.0.3" />
+    </platform>
+</plugin>
