@@ -166,7 +166,7 @@ public class GoogleConsent extends CordovaPlugin {
                     callbackContext.error("unknown error: " + e.getMessage());
                     return;
                   }
-                  callbackContext.success();
+                  callbackContext.success(result);
                 }
 
                 @Override
