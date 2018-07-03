@@ -172,7 +172,7 @@ public class GoogleConsent extends CordovaPlugin {
                 @Override
                 public void onConsentFormError(String errorDescription) {
                   Log.i(TAG, "consent form error");
-
+                  callbackContext.error(errorDescription);
                 }
               })
               .withPersonalizedAdsOption()
