@@ -1,5 +1,4 @@
 #import "MyCordovaPlugin.h"
-
 #import <Cordova/CDVAvailability.h>
 #import <PersonalizedAdConsent/PersonalizedAdConsent.h>
 
@@ -8,20 +7,10 @@
 - (void)pluginInitialize {
 }
 
-- (void)echo:(CDVInvokedUrlCommand*)command
-{
-    NSString* callbackId = [command callbackId];
-    NSString* msg = [NSString stringWithFormat: @"Echo: %@", [[command arguments] objectAtIndex:0]];
-
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:msg];
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-}
-
 - (void)setDebugOptions:(CDVInvokedUrlCommand*)command
 {
     NSObject* debugOptionsObject = [command.arguments objectAtIndex:0];
     NSString* geo = [debugOptionsObject valueForKey:@"geogrpaphy"];
-    NSLog(@"%@", geo);
 
 //    PACConsentInformation.sharedInstance.debugIdentifiers = @[ @"41E538F6-9C98-4EF2-B3EE-D7BD8CAF8339" ];
     if (geo != (id)[NSNull null] ) {
@@ -40,34 +29,30 @@
 - (void)requestConsentStatus:(CDVInvokedUrlCommand*)command
 {
     NSString* pubId = [command.arguments objectAtIndex:0];
-
-    NSLog(@"DIMA");
-    NSLog(@"%@", pubId);
+//    NSArray *pubIdArray = @[pubId];
+//    NSArray* pubIdArray = [NSArray arrayWithObjects: pubId, nil];
     [PACConsentInformation.sharedInstance
      requestConsentInfoUpdateForPublisherIdentifiers:pubId
      completionHandler:^(NSError *_Nullable error) {
 
          if (error) {
-             NSLog(@"DIMA1");
-             NSLog(@"%@", error);
-             // Consent info update failed.
+             NSLog(@"requestConsentStatus - Error: %@", error);
+             CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
          } else {
-             NSLog(@"DIMA2");
-             NSLog(@"%li", PACConsentInformation.sharedInstance.consentStatus);
-
              NSString* resultString;
              if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusPersonalized ) {
                  resultString = @"PERSONALIZED";
              } else if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusNonPersonalized ) {
                  resultString = @"NON_PERSONALIZED";
-             } else if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusUnknown ) {
+//             } else if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusUnknown ) {
+             } else {
                  resultString = @"UNKNOWN";
              }
              CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:resultString];
              [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
          }
      }];
-
 }
 
 - (void)loadConsentForm:(CDVInvokedUrlCommand*)command
@@ -82,12 +67,12 @@
     [form loadWithCompletionHandler:^(NSError *_Nullable error) {
         if (error) {
             NSLog(@"Load complete. Error: %@", error);
-            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
             [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
         } else {
             [form presentFromViewController:self.viewController dismissCompletion:^(NSError *_Nullable error, BOOL userPrefersAdFree) {
                   if (error) {
-                      CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+                      CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
                       [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
                   } else if (userPrefersAdFree) {
                       NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"true", @"userPrefersAdFree", nil];
