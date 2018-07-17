@@ -10,7 +10,7 @@
     <platform name="android">
       <framework src="com.google.android.ads.consent:consent-library:$GC_VERSION" />
       <preference name="GC_VERSION" default="1.0.4"/>
-      <js-module src="www/plugin.js" name="plugin">
+      <js-module src="www/plugin.js" name="CordovaGoogleConsentPlugin">
         <runs/>
         <clobbers target="CordovaGoogleConsentPlugin" />
       </js-module>
@@ -28,18 +28,18 @@
     </platform>
 
     <platform name="ios">
-        <js-module src="www/plugin.js" name="plugin">
+        <js-module src="www/plugin.js" name="CordovaGoogleConsentPlugin">
             <runs/>
             <clobbers target="CordovaGoogleConsentPlugin" />
         </js-module>
         <config-file target="config.xml" parent="/*">
             <feature name="CordovaGoogleConsentPlugin">
-                <param name="ios-package" value="MyCordovaPlugin" onload="true" />
+                <param name="ios-package" value="CordovaGoogleConsentPlugin" onload="true" />
             </feature>
         </config-file>
 
-        <header-file src="src/ios/MyCordovaPlugin.h" />
-        <source-file src="src/ios/MyCordovaPlugin.m" />
+        <header-file src="src/ios/CordovaGoogleConsentPlugin.h" />
+        <source-file src="src/ios/CordovaGoogleConsentPlugin.m" />
         <framework src="PersonalizedAdConsent" type="podspec" spec="1.0.3" />
     </platform>
 </plugin>

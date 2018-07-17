@@ -1,25 +1,27 @@
-#import "MyCordovaPlugin.h"
+#import "CordovaGoogleConsentPlugin.h"
 #import <Cordova/CDVAvailability.h>
 #import <PersonalizedAdConsent/PersonalizedAdConsent.h>
 
-@implementation MyCordovaPlugin
+@implementation CordovaGoogleConsentPlugin
 
 - (void)pluginInitialize {
 }
 
 - (void)setDebugOptions:(CDVInvokedUrlCommand*)command
 {
-    NSObject* debugOptionsObject = [command.arguments objectAtIndex:0];
-    NSString* geo = [debugOptionsObject valueForKey:@"geogrpaphy"];
+    if (command.arguments.count) {
+        NSObject* debugOptionsObject = [command.arguments objectAtIndex:0];
+        NSString* geo = [debugOptionsObject valueForKey:@"geogrpaphy"];
 
-//    PACConsentInformation.sharedInstance.debugIdentifiers = @[ @"41E538F6-9C98-4EF2-B3EE-D7BD8CAF8339" ];
-    if (geo != (id)[NSNull null] ) {
-        if ([geo isEqualToString:@"EEA"]) {
-            PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyEEA;
-        } else if ([geo isEqualToString:@"NOT_EEA"]) {
-            PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyNotEEA;
-        } else if ([geo isEqualToString:@"DISABLED"]) {
-            PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyDisabled;
+    //    PACConsentInformation.sharedInstance.debugIdentifiers = @[ @"41E538F6-9C98-4EF2-B3EE-D7BD8CAF8339" ];
+        if (geo.length) {
+            if ([geo isEqualToString:@"EEA"]) {
+                PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyEEA;
+            } else if ([geo isEqualToString:@"NOT_EEA"]) {
+                PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyNotEEA;
+            } else if ([geo isEqualToString:@"DISABLED"]) {
+                PACConsentInformation.sharedInstance.debugGeography = PACDebugGeographyDisabled;
+            }
         }
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -29,8 +31,6 @@
 - (void)requestConsentStatus:(CDVInvokedUrlCommand*)command
 {
     NSString* pubId = [command.arguments objectAtIndex:0];
-//    NSArray *pubIdArray = @[pubId];
-//    NSArray* pubIdArray = [NSArray arrayWithObjects: pubId, nil];
     [PACConsentInformation.sharedInstance
      requestConsentInfoUpdateForPublisherIdentifiers:pubId
      completionHandler:^(NSError *_Nullable error) {
@@ -45,7 +45,6 @@
                  resultString = @"PERSONALIZED";
              } else if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusNonPersonalized ) {
                  resultString = @"NON_PERSONALIZED";
-//             } else if ( PACConsentInformation.sharedInstance.consentStatus == PACConsentStatusUnknown ) {
              } else {
                  resultString = @"UNKNOWN";
              }
