@@ -139,46 +139,55 @@ public class GoogleConsent extends CordovaPlugin {
     cordova.getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-
-      GoogleConsent.this.mConsentForm = new ConsentForm.Builder(webView.getContext(), privacyUrl)
-              .withListener(new ConsentFormListener() {
-                @Override
-                public void onConsentFormLoaded() {
-                  GoogleConsent.this.mConsentForm.show();
-                  Log.i(TAG, "consent form is loaded");
-                }
-
-                @Override
-                public void onConsentFormOpened() {
-                  Log.i(TAG, "consent form is opened");
-                }
-
-                @Override
-                public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
-                  Log.i(TAG, "consent form is closed");
-                  JSONObject result = new JSONObject();
-                  try {
-                    result.put("consentStatus", consentStatus != null ? consentStatus.name(): null);
-                    if (userPrefersAdFree != null) {
-                      result.put("userPrefersAdFree", userPrefersAdFree);
+        try {
+          GoogleConsent.this.mConsentForm = new ConsentForm.Builder(webView.getContext(), privacyUrl)
+                  .withListener(new ConsentFormListener() {
+                    @Override
+                    public void onConsentFormLoaded() {
+                      Log.i(TAG, "consent form is loaded");
+                      try {
+                        GoogleConsent.this.mConsentForm.show();
+                      } catch (Exception e) {
+                        Log.e(TAG, "consent form runtime error", e);
+                        callbackContext.error(e.getMessage());
+                      }
                     }
-                  } catch (JSONException e) {
-                    callbackContext.error("unknown error: " + e.getMessage());
-                    return;
-                  }
-                  callbackContext.success(result);
-                }
 
-                @Override
-                public void onConsentFormError(String errorDescription) {
-                  Log.i(TAG, "consent form error");
-                  callbackContext.error(errorDescription);
-                }
-              })
-              .withPersonalizedAdsOption()
-              .withNonPersonalizedAdsOption()
-              .build();
-        GoogleConsent.this.mConsentForm.load();
+                    @Override
+                    public void onConsentFormOpened() {
+                      Log.i(TAG, "consent form is opened");
+                    }
+
+                    @Override
+                    public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
+                      Log.i(TAG, "consent form is closed");
+                      JSONObject result = new JSONObject();
+                      try {
+                        result.put("consentStatus", consentStatus != null ? consentStatus.name() : null);
+                        if (userPrefersAdFree != null) {
+                          result.put("userPrefersAdFree", userPrefersAdFree);
+                        }
+                      } catch (JSONException e) {
+                        callbackContext.error("unknown error: " + e.getMessage());
+                        return;
+                      }
+                      callbackContext.success(result);
+                    }
+
+                    @Override
+                    public void onConsentFormError(String errorDescription) {
+                      Log.i(TAG, "consent form error");
+                      callbackContext.error(errorDescription);
+                    }
+                  })
+                  .withPersonalizedAdsOption()
+                  .withNonPersonalizedAdsOption()
+                  .build();
+          GoogleConsent.this.mConsentForm.load();
+        } catch (Exception e) {
+          Log.e(TAG, "consent form runtime error", e);
+          callbackContext.error(e.getMessage());
+        }
       }
     });
   }
